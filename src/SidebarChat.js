@@ -3,7 +3,7 @@ import { Avatar } from "@mui/material";
 import React from "react";
 import "./sidebarchat.css";
 
-function SidebarChat({ addNewChat }) {
+function SidebarChat({ id, name, addNewChat }) {
   const [seed, setSeed] = useState("");
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function SidebarChat({ addNewChat }) {
         src={`https://avatars.dicebear.com/api/pixel-art/${seed}.svg`}
       ></Avatar>
       <div className="sidebarchat_info">
-        <h2>Room Name</h2>
+        <h2>{name}</h2>
         <p>Last message</p>
       </div>
     </div>

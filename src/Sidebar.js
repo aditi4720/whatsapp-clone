@@ -6,7 +6,22 @@ import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import "./sidebar.css";
 import SidebarChat from "./SidebarChat";
+import { useState, useEffect } from "react";
+import db from "./firebase";
+//import firebase from "firebase";
+
 function Sidebar() {
+  const [rooms, setRooms] = useState([]);
+  useEffect(() => {
+    db.Collection("rooms").onSnapshot(("testing", db), (snapshot) =>
+      setRooms(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      )
+    );
+  }, []);
   return (
     <div className="sidebar">
       <div className="sidebar_header">
@@ -31,10 +46,13 @@ function Sidebar() {
       </div>
       <div className="sidebar_chats">
         <SidebarChat addNewChat></SidebarChat>
-        <SidebarChat></SidebarChat>
-        <SidebarChat></SidebarChat>
-        <SidebarChat></SidebarChat>
-        <SidebarChat></SidebarChat>
+        {rooms.map((room) => (
+          <SidebarChat
+            key={room.id}
+            id={room.id}
+            name={room.data.name}
+          ></SidebarChat>
+        ))}
       </div>
     </div>
   );
