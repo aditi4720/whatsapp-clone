@@ -8,11 +8,29 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import MicIcon from "@mui/icons-material/Mic";
 import "./chat.css";
 import { useParams } from "react-router-dom";
+import db from "./firebase";
 function Chat() {
   const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
-  const [roomId] = useParams();
+  const { roomId } = useParams();
+  const [roomname, setroomname] = useState("");
+  const [messages, setMessage] = useState([]);
+  useEffect(() => {
+    if (roomId) {
+      db.collection("rooms")
+        .doc(roomId)
+        .onSnapshot((snapshot) => setroomname(snapshot.data().name));
 
+      db.collection("rooms")
+        .doc(roomId)
+        .collection("messages")
+        .orderBy("timestamp", "asc")
+        .onSnapshot(
+          (snapshot) => setMessage(snapshot.docs.map((doc) => doc.data()))
+          //setMessage(snapshot.docs.map((doc) => doc.data()))
+        );
+    }
+  }, [roomId]);
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
   }, []);
@@ -29,7 +47,7 @@ function Chat() {
           src={`https://avatars.dicebear.com/api/pixel-art/${seed}.svg`}
         ></Avatar>
         <div className="chat_headerInfo">
-          <h3>Person Name</h3>
+          <h3>{roomname}</h3>
           <p>Last Seen</p>
         </div>
         <div className="chat_headerRight">
@@ -45,11 +63,13 @@ function Chat() {
         </div>
       </div>
       <div className="chat_body">
-        <p className={`chat_message ${true && "chat_reciever"}`}>
-          <span className="chat_name">Aditi </span>
-          hey babe
-          <span className="chat_timestamp">12:39pm</span>
-        </p>
+        {messages.map((message) => (
+          <p className={`chat_message ${true && "chat_reciever"}`}>
+            <span className="chat_name">{message.name} </span>
+            {message.message}
+            <span className="chat_timestamp">{message.timestamp}</span>
+          </p>
+        ))}
       </div>
       <div className="chat_footer">
         <InsertEmoticonIcon></InsertEmoticonIcon>

@@ -1,24 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Sidebar from "./Sidebar";
 import Chat from "./Chat";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./Login";
+import { useStateValue } from "./StateProvider";
 function App() {
+  const [{ user }, dispatch] = useStateValue();
+
   return (
     /*BEM convention*/
     <div className="app">
-      <div className="app_body">
-        <Router>
-          <Routes>
-            <Route path="/" element={<Sidebar />} />
-            {/* <Route path="/app" element={<Chat />} />  */}
-            {<Route path="/rooms/:roomId" element={[<Chat />]} />}
-            {/* </Routes></Route> */}
-            <Route path="/" element={[<Chat />]} />
-          </Routes>
-        </Router>
-      </div>
+      {!user ? (
+        <Login />
+      ) : (
+        <div className="app_body">
+          <BrowserRouter>
+            <Sidebar></Sidebar>
+            <Routes>
+              <Route path="/rooms/:roomId" element={<Chat />} />
+              <Route exact path="/" element={<Chat />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      )}
     </div>
   );
 }

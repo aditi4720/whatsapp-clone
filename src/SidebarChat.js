@@ -3,7 +3,7 @@ import { Avatar } from "@mui/material";
 import React from "react";
 import "./sidebarchat.css";
 import db from "./firebase";
-import { Link } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 function SidebarChat({ id, name, addNewChat }) {
   const [seed, setSeed] = useState("");
